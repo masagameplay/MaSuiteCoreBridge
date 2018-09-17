@@ -19,8 +19,9 @@ public class PluginMessageListener implements org.bukkit.plugin.messaging.Plugin
     PluginMessageListener(MaSuiteCore p) {
         plugin = p;
     }
+
     public void onPluginMessageReceived(String channel, Player player, byte[] message) {
-        if(!channel.equals("BungeeCord")){
+        if (!channel.equals("BungeeCord")) {
             return;
         }
         DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
@@ -28,7 +29,7 @@ public class PluginMessageListener implements org.bukkit.plugin.messaging.Plugin
         String subchannel = null;
         try {
             subchannel = in.readUTF();
-            if(subchannel.equals("MaSuitePlayerLocation")){
+            if (subchannel.equals("MaSuitePlayerLocation")) {
                 Player p = Bukkit.getPlayer(UUID.fromString(in.readUTF()));
                 Location loc = p.getLocation();
                 ByteArrayDataOutput out = ByteStreams.newDataOutput();
@@ -42,7 +43,7 @@ public class PluginMessageListener implements org.bukkit.plugin.messaging.Plugin
                 out.writeFloat(loc.getPitch());
                 player.sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
             }
-            if(subchannel.equals("MaSuitePlayerGroup")){
+            if (subchannel.equals("MaSuitePlayerGroup")) {
                 Player p = Bukkit.getPlayer(UUID.fromString(in.readUTF()));
                 ByteArrayDataOutput out = ByteStreams.newDataOutput();
                 out.writeUTF("MaSuitePlayerGroup");
@@ -56,20 +57,27 @@ public class PluginMessageListener implements org.bukkit.plugin.messaging.Plugin
         }
 
     }
+
     private static String getPrefix(Player p) {
-        if (getChat().getPlayerPrefix(p) != null) {
-            return getChat().getPlayerPrefix(p);
-        } else if (getChat().getGroupPrefix(p.getWorld(), getChat().getPrimaryGroup(p)) != null) {
-            return getChat().getGroupPrefix(p.getWorld(), getChat().getPrimaryGroup(p));
+        if (getChat() != null) {
+            if (getChat().getPlayerPrefix(p) != null) {
+                return getChat().getPlayerPrefix(p);
+            } else if (getChat().getGroupPrefix(p.getWorld(), getChat().getPrimaryGroup(p)) != null) {
+                return getChat().getGroupPrefix(p.getWorld(), getChat().getPrimaryGroup(p));
+            }
+            return "";
         }
         return "";
     }
 
     private static String getSuffix(Player p) {
-        if (getChat().getPlayerSuffix(p) != null) {
-            return getChat().getPlayerSuffix(p);
-        } else if (getChat().getGroupSuffix(p.getWorld(), getChat().getPrimaryGroup(p)) != null) {
-            return getChat().getGroupSuffix(p.getWorld(), getChat().getPrimaryGroup(p));
+        if (getChat() != null) {
+            if (getChat().getPlayerSuffix(p) != null) {
+                return getChat().getPlayerSuffix(p);
+            } else if (getChat().getGroupSuffix(p.getWorld(), getChat().getPrimaryGroup(p)) != null) {
+                return getChat().getGroupSuffix(p.getWorld(), getChat().getPrimaryGroup(p));
+            }
+            return "";
         }
         return "";
     }
