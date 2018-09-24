@@ -5,7 +5,7 @@ import net.milkbowl.vault.chat.Chat;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -23,13 +23,19 @@ public class MaSuiteCore extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent e){
+    public void onJoin(PlayerLoginEvent e){
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("MaSuitePlayerGroup");
         out.writeUTF(e.getPlayer().getUniqueId().toString());
         out.writeUTF(getPrefix(e.getPlayer()));
         out.writeUTF(getSuffix(e.getPlayer()));
-        e.getPlayer().sendPluginMessage(this, "BungeeCord", out.toByteArray());
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e1) {
+            e1.printStackTrace();
+        }
+        getServer().sendPluginMessage(this, "BungeeCord", out.toByteArray());
+        System.out.println("asddaw");
     }
 
     private boolean setupChat() {
