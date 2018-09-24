@@ -1,14 +1,16 @@
 package fi.matiaspaavilainen.masuitecore;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import net.milkbowl.vault.chat.Chat;
-import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.permission.Permission;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class MaSuiteCore extends JavaPlugin {
+public class MaSuiteCore extends JavaPlugin implements Listener {
 
-    private static Economy econ = null;
-    private static Permission perms = null;
     private static Chat chat = null;
 
     @Override
@@ -16,7 +18,18 @@ public class MaSuiteCore extends JavaPlugin {
         super.onEnable();
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new PluginMessageListener(this));
+        this.getServer().getPluginManager().registerEvents(this, this);
         setupChat();
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent e){
+        ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF("MaSuitePlayerGroup");
+        out.writeUTF(e.getPlayer().getUniqueId().toString());
+        out.writeUTF(getPrefix(e.getPlayer()));
+        out.writeUTF(getSuffix(e.getPlayer()));
+        e.getPlayer().sendPluginMessage(this, "BungeeCord", out.toByteArray());
     }
 
     private boolean setupChat() {
@@ -30,5 +43,29 @@ public class MaSuiteCore extends JavaPlugin {
 
     static Chat getChat() {
         return chat;
+    }
+
+    String getPrefix(Player p) {
+        if (getChat() != null) {
+            if (getChat().getPlayerPrefix(p) != null) {
+                return getChat().getPlayerPrefix(p);
+            } else if (getChat().getGroupPrefix(p.getWorld(), getChat().getPrimaryGroup(p)) != null) {
+                return getChat().getGroupPrefix(p.getWorld(), getChat().getPrimaryGroup(p));
+            }
+            return "";
+        }
+        return "";
+    }
+
+    String getSuffix(Player p) {
+        if (getChat() != null) {
+            if (getChat().getPlayerSuffix(p) != null) {
+                return getChat().getPlayerSuffix(p);
+            } else if (getChat().getGroupSuffix(p.getWorld(), getChat().getPrimaryGroup(p)) != null) {
+                return getChat().getGroupSuffix(p.getWorld(), getChat().getPrimaryGroup(p));
+            }
+            return "";
+        }
+        return "";
     }
 }

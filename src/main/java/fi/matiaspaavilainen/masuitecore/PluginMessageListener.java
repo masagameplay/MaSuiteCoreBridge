@@ -11,8 +11,6 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.UUID;
 
-import static fi.matiaspaavilainen.masuitecore.MaSuiteCore.getChat;
-
 public class PluginMessageListener implements org.bukkit.plugin.messaging.PluginMessageListener {
     private static MaSuiteCore plugin;
 
@@ -48,37 +46,13 @@ public class PluginMessageListener implements org.bukkit.plugin.messaging.Plugin
                 ByteArrayDataOutput out = ByteStreams.newDataOutput();
                 out.writeUTF("MaSuitePlayerGroup");
                 out.writeUTF(String.valueOf(p.getUniqueId()));
-                out.writeUTF(getPrefix(p));
-                out.writeUTF(getSuffix(p));
+                out.writeUTF(plugin.getPrefix(p));
+                out.writeUTF(plugin.getSuffix(p));
                 player.sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-    }
-
-    private static String getPrefix(Player p) {
-        if (getChat() != null) {
-            if (getChat().getPlayerPrefix(p) != null) {
-                return getChat().getPlayerPrefix(p);
-            } else if (getChat().getGroupPrefix(p.getWorld(), getChat().getPrimaryGroup(p)) != null) {
-                return getChat().getGroupPrefix(p.getWorld(), getChat().getPrimaryGroup(p));
-            }
-            return "";
-        }
-        return "";
-    }
-
-    private static String getSuffix(Player p) {
-        if (getChat() != null) {
-            if (getChat().getPlayerSuffix(p) != null) {
-                return getChat().getPlayerSuffix(p);
-            } else if (getChat().getGroupSuffix(p.getWorld(), getChat().getPrimaryGroup(p)) != null) {
-                return getChat().getGroupSuffix(p.getWorld(), getChat().getPrimaryGroup(p));
-            }
-            return "";
-        }
-        return "";
     }
 }
