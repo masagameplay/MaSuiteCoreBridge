@@ -8,6 +8,7 @@
     <artifactId>MaSuiteCoreBridge</artifactId>
     <version>1.4.4</version>
     <build>
+        <finalName>MaSuiteCoreBridge</finalName>
         <defaultGoal>clean package install</defaultGoal>
         <resources>
             <resource>
