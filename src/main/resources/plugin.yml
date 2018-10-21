@@ -1,5 +1,4 @@
 name: MaSuiteCoreBridge
 main: fi.matiaspaavilainen.masuitecore.MaSuiteCore
-version: 1.4.4
+version: 1.4.6
 author: Masagameplay
-depend: [Vault]

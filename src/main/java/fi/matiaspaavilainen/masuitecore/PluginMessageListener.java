@@ -11,8 +11,6 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.UUID;
 
-import static fi.matiaspaavilainen.masuitecore.MaSuiteCore.getChat;
-
 public class PluginMessageListener implements org.bukkit.plugin.messaging.PluginMessageListener {
     private static MaSuiteCore plugin;
 
@@ -31,6 +29,9 @@ public class PluginMessageListener implements org.bukkit.plugin.messaging.Plugin
             subchannel = in.readUTF();
             if (subchannel.equals("MaSuitePlayerLocation")) {
                 Player p = Bukkit.getPlayer(UUID.fromString(in.readUTF()));
+                if(p == null){
+                    return;
+                }
                 Location loc = p.getLocation();
                 ByteArrayDataOutput out = ByteStreams.newDataOutput();
                 out.writeUTF("MaSuitePlayerLocation");
@@ -45,6 +46,9 @@ public class PluginMessageListener implements org.bukkit.plugin.messaging.Plugin
             }
             if (subchannel.equals("MaSuitePlayerGroup")) {
                 Player p = Bukkit.getPlayer(UUID.fromString(in.readUTF()));
+                if(p == null){
+                    return;
+                }
                 ByteArrayDataOutput out = ByteStreams.newDataOutput();
                 out.writeUTF("MaSuitePlayerGroup");
                 out.writeUTF(String.valueOf(p.getUniqueId()));
@@ -58,11 +62,11 @@ public class PluginMessageListener implements org.bukkit.plugin.messaging.Plugin
 
     }
     private String getPrefix(Player p) {
-        if (getChat() != null) {
-            if (getChat().getPlayerPrefix(p) != null) {
-                return getChat().getPlayerPrefix(p);
-            } else if (getChat().getGroupPrefix(p.getWorld(), getChat().getPrimaryGroup(p)) != null) {
-                return getChat().getGroupPrefix(p.getWorld(), getChat().getPrimaryGroup(p));
+        if (plugin.getChat() != null) {
+            if (plugin.getChat().getPlayerPrefix(p) != null) {
+                return plugin.getChat().getPlayerPrefix(p);
+            } else if (plugin.getChat().getGroupPrefix(p.getWorld(), plugin.getChat().getPrimaryGroup(p)) != null) {
+                return plugin.getChat().getGroupPrefix(p.getWorld(), plugin.getChat().getPrimaryGroup(p));
             }
             return "";
         }
@@ -70,11 +74,11 @@ public class PluginMessageListener implements org.bukkit.plugin.messaging.Plugin
     }
 
     private String getSuffix(Player p) {
-        if (getChat() != null) {
-            if (getChat().getPlayerSuffix(p) != null) {
-                return getChat().getPlayerSuffix(p);
-            } else if (getChat().getGroupSuffix(p.getWorld(), getChat().getPrimaryGroup(p)) != null) {
-                return getChat().getGroupSuffix(p.getWorld(), getChat().getPrimaryGroup(p));
+        if (plugin.getChat() != null) {
+            if (plugin.getChat().getPlayerSuffix(p) != null) {
+                return plugin.getChat().getPlayerSuffix(p);
+            } else if (plugin.getChat().getGroupSuffix(p.getWorld(), plugin.getChat().getPrimaryGroup(p)) != null) {
+                return plugin.getChat().getGroupSuffix(p.getWorld(), plugin.getChat().getPrimaryGroup(p));
             }
             return "";
         }

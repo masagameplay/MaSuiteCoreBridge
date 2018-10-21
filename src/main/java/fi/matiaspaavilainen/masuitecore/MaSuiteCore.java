@@ -1,11 +1,6 @@
 package fi.matiaspaavilainen.masuitecore;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 import net.milkbowl.vault.chat.Chat;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -16,12 +11,16 @@ public class MaSuiteCore extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         super.onEnable();
-        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-        this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new PluginMessageListener(this));
-        this.getServer().getPluginManager().registerEvents(this, this);
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new PluginMessageListener(this));
+        getServer().getPluginManager().registerEvents(this, this);
         setupChat();
-    }
 
+        if(chat == null){
+            getServer().getPluginManager().disablePlugin(this);
+            System.out.println("[MaSuite] [Core] Vault not found... Disabling...");
+        }
+    }
 
     private boolean setupChat() {
         RegisteredServiceProvider<Chat> chatProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.chat.Chat.class);
@@ -32,7 +31,7 @@ public class MaSuiteCore extends JavaPlugin implements Listener {
         return (chat != null);
     }
 
-    static Chat getChat() {
+    public Chat getChat() {
         return chat;
     }
 }
