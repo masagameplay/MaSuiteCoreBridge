@@ -1,14 +1,10 @@
 package fi.matiaspaavilainen.masuitecore;
 
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.UUID;
 
 public class PluginMessageListener implements org.bukkit.plugin.messaging.PluginMessageListener {
@@ -27,13 +23,16 @@ public class PluginMessageListener implements org.bukkit.plugin.messaging.Plugin
         String subchannel = null;
         try {
             subchannel = in.readUTF();
+            ByteArrayOutputStream b = new ByteArrayOutputStream();
+            DataOutputStream out = new DataOutputStream(b);
+
             if (subchannel.equals("MaSuitePlayerLocation")) {
                 Player p = Bukkit.getPlayer(UUID.fromString(in.readUTF()));
-                if(p == null){
+                if (p == null) {
                     return;
                 }
                 Location loc = p.getLocation();
-                ByteArrayDataOutput out = ByteStreams.newDataOutput();
+
                 out.writeUTF("MaSuitePlayerLocation");
                 out.writeUTF(String.valueOf(p.getUniqueId()));
                 out.writeUTF(loc.getWorld().getName());
@@ -42,25 +41,25 @@ public class PluginMessageListener implements org.bukkit.plugin.messaging.Plugin
                 out.writeDouble(loc.getZ());
                 out.writeFloat(loc.getYaw());
                 out.writeFloat(loc.getPitch());
-                player.sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
+                player.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
             }
             if (subchannel.equals("MaSuitePlayerGroup")) {
                 Player p = Bukkit.getPlayer(UUID.fromString(in.readUTF()));
-                if(p == null){
+                if (p == null) {
                     return;
                 }
-                ByteArrayDataOutput out = ByteStreams.newDataOutput();
                 out.writeUTF("MaSuitePlayerGroup");
                 out.writeUTF(String.valueOf(p.getUniqueId()));
                 out.writeUTF(getPrefix(p));
                 out.writeUTF(getSuffix(p));
-                player.sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
+                player.sendPluginMessage(plugin, "BungeeCord", b.toByteArray());
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
+
     private String getPrefix(Player p) {
         if (plugin.getChat() != null) {
             if (plugin.getChat().getPlayerPrefix(p) != null) {
